@@ -7,6 +7,8 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 @Repository
 public interface LlamaRepository extends JpaRepository<Llama, Long> {
-    @Query(value = "select l.llama_id as llama_id, l.name as name, l.color as color, l.age as age from llama l", nativeQuery = true)
+    @Query(value = "select l.llama_id as llama_id, l.name as name, l.color as color, l.age as age, l.description as description  from llama l", nativeQuery = true)
     List<Llama> getLlamas();
+
+    List<Llama> getLlamasByColorIgnoreCase(String color);
 }

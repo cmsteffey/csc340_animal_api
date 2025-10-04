@@ -12,4 +12,7 @@ public class LlamaService {
     public List<Llama> getAllLlamas(){
         return llamaRepository.getLlamas();
     }
+    public List<Llama> getLlamasByColor(String color){
+        return llamaRepository.getLlamasByColorIgnoreCase(color);
+    }
 }
