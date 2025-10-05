@@ -1,5 +1,6 @@
 package tech.cmsteffey.personal.csc340_animal_api;
 
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -25,5 +26,15 @@ public class LlamaController {
         if (name == null)
             return ResponseEntity.badRequest().contentType(MediaType.TEXT_PLAIN).body("Needs 'name' parameter");
         return ResponseEntity.ok(llamaService.getLlamasByName(name));
+    }
+
+    @PostMapping("/llamas")
+    public ResponseEntity createLlama(@RequestBody Llama llama){
+        try{
+            return ResponseEntity.ok(llamaService.saveLlama(llama));
+        } catch (Exception e){
+            LoggerFactory.getLogger(LlamaController.class).warn("Llama post error: ", e);
+            return ResponseEntity.badRequest().body("Malformed body");
+        }
     }
 }

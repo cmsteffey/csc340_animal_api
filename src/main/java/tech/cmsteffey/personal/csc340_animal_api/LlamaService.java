@@ -18,4 +18,7 @@ public class LlamaService {
     public List<Llama> getLlamasByName(String name){
         return llamaRepository.getLlamasByNameContainingIgnoreCase(name);
     }
+    public Llama saveLlama(Llama llama){
+        return llamaRepository.save(llama);
+    }
 }
