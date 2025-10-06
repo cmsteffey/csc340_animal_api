@@ -19,6 +19,13 @@ public class LlamaController {
     public List<Llama> getAllLlamas(){
         return llamaService.getAllLlamas();
     }
+    @GetMapping("/llamas/{id}")
+    public ResponseEntity getLlamaById(@PathVariable Long id){
+        Optional<Llama> possibleLlama = llamaService.getLlamaById(id);
+        if(possibleLlama.isPresent())
+            return ResponseEntity.ok(possibleLlama.get());
+        return ResponseEntity.notFound().build();
+    }
     @GetMapping("/llamas/color/{color}")
     public List<Llama> getLlamasByColor(@PathVariable String color){
         return llamaService.getLlamasByColor(color);
