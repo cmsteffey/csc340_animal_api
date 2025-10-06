@@ -1,6 +1,7 @@
 package tech.cmsteffey.personal.csc340_animal_api;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,5 +26,13 @@ public class LlamaService {
     }
     public Optional<Llama> getLlamaById(Long id){
         return llamaRepository.getLlamaByLlamaId(id);
+    }
+    public boolean deleteLlamaById(Long id){
+        try {
+            llamaRepository.deleteById(id);
+            return true;
+        } catch (EmptyResultDataAccessException e){
+            return false;
+        }
     }
 }

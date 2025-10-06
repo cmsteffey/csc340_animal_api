@@ -57,4 +57,11 @@ public class LlamaController {
         new ObjectMapper().readerForUpdating(existingLlama).readValue(llamaNode);
         return ResponseEntity.ok(llamaService.saveLlama(existingLlama));
     }
+
+    @DeleteMapping("/llamas/{id}")
+    public ResponseEntity deleteLlama(@PathVariable Long id){
+        if(llamaService.deleteLlamaById(id))
+            return ResponseEntity.noContent().build();
+        return ResponseEntity.notFound().build();
+    }
 }
