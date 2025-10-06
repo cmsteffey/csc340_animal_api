@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
+
 @Service
 public class LlamaService {
     @Autowired
@@ -20,5 +22,8 @@ public class LlamaService {
     }
     public Llama saveLlama(Llama llama){
         return llamaRepository.save(llama);
+    }
+    public Optional<Llama> getLlamaById(Long id){
+        return llamaRepository.getLlamaByLlamaId(id);
     }
 }
