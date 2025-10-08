@@ -13,7 +13,7 @@ public class LlamaService {
     private LlamaRepository llamaRepository;
 
     public List<Llama> getAllLlamas(){
-        return llamaRepository.getAllBy();
+        return llamaRepository.getAllLlamas();
     }
     public List<Llama> getLlamasByColor(String color){
         return llamaRepository.getLlamasByColorIgnoreCase(color);
