@@ -1,4 +1,32 @@
-﻿## API Endpoints
+﻿# csc340_animal_api
+Simple CRUD API for Student Objects with JPA (Hibernate)
+
+### Version
+1.0.0
+
+## Installation
+- Get the project
+    - clone
+        ```
+      git clone https://github.com/cmsteffey/csc340_animal_api
+        ```
+    - OR download zip.
+- Open the project in VS Code.
+- This project is built to run with jdk 21.
+- [Dependencies](https://github.com/cmsteffey/csc340_animal_api/blob/main/pom.xml#L38) to JPA and Postgres in addition to the usual Spring Web. JPA handles the persistence, Postgresql is the database to be used.
+- [`/src/main/resources/application.properties`](https://github.com/cmsteffey/csc340_animal_api/blob/main/application.properties) This file has the configuration for the PostgreSQL database to use for the API.
+    - You MUST have the database up and running before running the project!
+        - Login to your neon.tech account.
+        - Locate your database project.
+        - On the project dashboard, click on "Connect" and select Java.
+        - Copy the connection string provided.
+        - Paste it as a value for the property `spring.datasource.url`. No quotation marks.
+        - `spring.datasource.username` and `spring.datasource.password` should be filled if your url doesn't work by itself.
+- Build and run the main class. You should see a new table created in the Neon database.
+
+
+[Demo video](https://uncg-my.sharepoint.com/:v:/g/personal/cmsteffey_uncg_edu/EQ0JKaww-6pEiaXm3C4oofgBbi1m4ekisPkxrbzpUy0NwQ?nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0&e=s4n3IP)
+## API Endpoints
 Base URL: [`http://localhost:8080/llamas`](http://localhost:8080/llamas)
 
 
@@ -181,3 +209,5 @@ Delete an existing Llama.
   },
 ]
 ```
+
+[Demo video](https://uncg-my.sharepoint.com/:v:/g/personal/cmsteffey_uncg_edu/EQ0JKaww-6pEiaXm3C4oofgBbi1m4ekisPkxrbzpUy0NwQ?nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0&e=s4n3IP)
