@@ -1,11 +1,14 @@
 package tech.cmsteffey.personal.csc340_animal_api;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonIgnoreType;
 import jakarta.persistence.*;
 
 @Entity
 @Table(name = "llama")
+@JsonIgnoreProperties(value = {"llamaId"}, allowSetters = false, allowGetters = true)
 public class Llama {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long llamaId;

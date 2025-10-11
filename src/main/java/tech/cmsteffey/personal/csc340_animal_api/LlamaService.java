@@ -28,6 +28,9 @@ public class LlamaService {
         return llamaRepository.getLlamaByLlamaId(id);
     }
     public boolean deleteLlamaById(Long id){
+        if(!llamaRepository.getLlamaByLlamaId(id).isPresent()){
+            return false;
+        }
         try {
             llamaRepository.deleteById(id);
             return true;

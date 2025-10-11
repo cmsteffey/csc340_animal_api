@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,8 +28,10 @@ public class LlamaController {
         return ResponseEntity.notFound().build();
     }
     @GetMapping("/llamas/color/{color}")
-    public List<Llama> getLlamasByColor(@PathVariable String color){
-        return llamaService.getLlamasByColor(color);
+    public ResponseEntity getLlamasByColor(@PathVariable(required = false) String color){
+        if(color.isEmpty())
+            return ResponseEntity.badRequest().contentType(MediaType.TEXT_PLAIN).body("No color specified");
+        return ResponseEntity.ok(llamaService.getLlamasByColor(color));
     }
 
     @GetMapping("/llamas/search")
@@ -42,9 +45,9 @@ public class LlamaController {
     public ResponseEntity createLlama(@RequestBody Llama llama){
         try{
             return ResponseEntity.ok(llamaService.saveLlama(llama));
-        } catch (Exception e){
+        } catch (DataIntegrityViolationException e){
             LoggerFactory.getLogger(LlamaController.class).warn("Llama post error: ", e);
-            return ResponseEntity.badRequest().body("Malformed body");
+            return ResponseEntity.badRequest().body("Field missing in JSON");
         }
     }
 
@@ -65,10 +68,21 @@ public class LlamaController {
         return ResponseEntity.ok(llamaService.saveLlama(existingLlama));
     }
 
+    @PutMapping("/llamas/{id}")
+    public ResponseEntity putLlama(@PathVariable Long id, @RequestBody Llama llama){
+        try {
+            llama.setLlamaId(id);
+            return ResponseEntity.ok(llamaService.saveLlama(llama));
+        }catch(DataIntegrityViolationException e){
+            LoggerFactory.getLogger(LlamaController.class).warn("Save failed: ", e);
+            return ResponseEntity.status(400).contentType(MediaType.TEXT_PLAIN).body("Field missing in JSON");
+        }
+    }
+
     @DeleteMapping("/llamas/{id}")
     public ResponseEntity deleteLlama(@PathVariable Long id){
         if(llamaService.deleteLlamaById(id))
-            return ResponseEntity.noContent().build();
+            return ResponseEntity.ok(llamaService.getAllLlamas());
         return ResponseEntity.notFound().build();
     }
 }
