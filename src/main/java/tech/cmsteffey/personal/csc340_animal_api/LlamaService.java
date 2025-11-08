@@ -3,7 +3,12 @@ package tech.cmsteffey.personal.csc340_animal_api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,6 +25,16 @@ public class LlamaService {
     }
     public List<Llama> getLlamasByName(String name){
         return llamaRepository.getLlamasByNameContainingIgnoreCase(name);
+    }
+    public void savePictureFile(long id, MultipartFile file){
+        if(file.isEmpty())
+            return;
+        File diskFile = new File("src/main/resources/static/profile_pictures/llama" + id);
+        try (FileOutputStream stream = new FileOutputStream(diskFile)){
+            stream.write(file.getBytes());
+        }catch (IOException ignored){
+
+        }
     }
     public Llama saveLlama(Llama llama){
         return llamaRepository.save(llama);

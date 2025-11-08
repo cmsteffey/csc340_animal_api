@@ -4,85 +4,150 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
+import java.util.stream.Stream;
 
-@org.springframework.web.bind.annotation.RestController
+@Controller
 public class LlamaController {
     @Autowired
     private LlamaService llamaService;
+
+    @GetMapping("/")
+    public String index(Model model)
+    {
+        return "redirect:/llamas";
+    }
     @GetMapping("/llamas")
-    public List<Llama> getAllLlamas(){
-        return llamaService.getAllLlamas();
+    public String getAllLlamas(Model model){
+        model.addAttribute("llamas", llamaService.getAllLlamas());
+        return "animal-list";
     }
     @GetMapping("/llamas/{id}")
-    public ResponseEntity getLlamaById(@PathVariable Long id){
-        Optional<Llama> possibleLlama = llamaService.getLlamaById(id);
-        if(possibleLlama.isPresent())
-            return ResponseEntity.ok(possibleLlama.get());
-        return ResponseEntity.notFound().build();
+    public String getLlamaById(@PathVariable Long id, Model model){
+        Optional<Llama> llama = llamaService.getLlamaById(id);
+        if(llama.isEmpty())
+            return "404";
+        model.addAttribute("llama", llama.orElseThrow());
+        return "animal-details";
     }
     @GetMapping("/llamas/color/{color}")
-    public ResponseEntity getLlamasByColor(@PathVariable(required = false) String color){
-        if(color.isEmpty())
-            return ResponseEntity.badRequest().contentType(MediaType.TEXT_PLAIN).body("No color specified");
-        return ResponseEntity.ok(llamaService.getLlamasByColor(color));
+    public String getLlamasByColor(@PathVariable(required = false) String color, Model model){
+        if(color == null || color.isEmpty())
+            return "400";
+        model.addAttribute("llamas", llamaService.getLlamasByColor(color));
+        return "animal-list";
     }
 
     @GetMapping("/llamas/search")
-    public ResponseEntity getLlamasByName(@RequestParam(required = false) String name) {
-        if (name == null)
-            return ResponseEntity.badRequest().contentType(MediaType.TEXT_PLAIN).body("Needs 'name' parameter");
-        return ResponseEntity.ok(llamaService.getLlamasByName(name));
+    public String getLlamasByName(@RequestParam(required = false) String name, Model model) {
+        if (name == null || name.isEmpty())
+            return "400";
+        model.addAttribute("llamas", llamaService.getLlamasByName(name));
+        return "animal-list";
     }
 
     @PostMapping("/llamas")
-    public ResponseEntity createLlama(@RequestBody Llama llama){
+    public String createLlama(@ModelAttribute Llama llama, @RequestParam MultipartFile pic){
         try{
-            return ResponseEntity.ok(llamaService.saveLlama(llama));
+            LoggerFactory.getLogger(LlamaController.class).warn("Empty: {}", pic.isEmpty());
+            if(pic.isEmpty())
+                return "400";
+            llama.setLlamaId(null);
+            llama.setImageContentType(pic.getContentType());
+            Llama saved = llamaService.saveLlama(llama);
+            llamaService.savePictureFile(saved.getLlamaId(), pic);
+            return "redirect:/llamas/" + saved.getLlamaId();
         } catch (DataIntegrityViolationException e){
-            LoggerFactory.getLogger(LlamaController.class).warn("Llama post error: ", e);
-            return ResponseEntity.badRequest().body("Field missing in JSON");
+            return "404";
         }
     }
 
-    @PatchMapping("/llamas/{id}")
-    public ResponseEntity updateLlama(@PathVariable Long id, @RequestBody JsonNode llamaNode) throws IOException {
-        Optional<Llama> found = llamaService.getLlamaById(id);
-        if(found.isEmpty())
-            return ResponseEntity.notFound().build();
-        Llama existingLlama = found.get();
-        Iterator<Map.Entry<String, JsonNode>> values = llamaNode.fields();
-        String[] fieldNames = Arrays.stream(Llama.class.getDeclaredFields()).map(x->x.getName()).toArray(String[]::new);
-        while(values.hasNext()){
-            Map.Entry<String, JsonNode> value = values.next();
-            if(!Arrays.asList(fieldNames).contains(value.getKey()))
-                return ResponseEntity.badRequest().contentType(MediaType.TEXT_PLAIN).body("JSON key " + value.getKey() + " does not exist in object definition of " + Llama.class.getSimpleName());
-        }
-        new ObjectMapper().readerForUpdating(existingLlama).readValue(llamaNode);
-        return ResponseEntity.ok(llamaService.saveLlama(existingLlama));
-    }
+    @PostMapping("/llamas/update/{id}")
+    public String putLlama(@PathVariable Long id, @ModelAttribute Llama llama, @RequestParam MultipartFile pic, Model model){
+        LoggerFactory.getLogger(LlamaController.class).warn("Update endpoint called!");
 
-    @PutMapping("/llamas/{id}")
-    public ResponseEntity putLlama(@PathVariable Long id, @RequestBody Llama llama){
+        Optional<Llama> dbLlama = llamaService.getLlamaById(id);
+        if(dbLlama.isEmpty())
+            return "400";
         try {
             llama.setLlamaId(id);
-            return ResponseEntity.ok(llamaService.saveLlama(llama));
+            if(!pic.isEmpty()){
+                LoggerFactory.getLogger(LlamaController.class).warn("NOT EMPTY!");
+                llama.setImageContentType(pic.getContentType());
+                llamaService.savePictureFile(id, pic);
+            } else {
+                llama.setImageContentType(dbLlama.orElseThrow().getImageContentType());
+            }
+            llama.setLlamaId(dbLlama.orElseThrow().getLlamaId());
+            llamaService.saveLlama(llama);
+            return "redirect:/llamas/" + id;
         }catch(DataIntegrityViolationException e){
             LoggerFactory.getLogger(LlamaController.class).warn("Save failed: ", e);
-            return ResponseEntity.status(400).contentType(MediaType.TEXT_PLAIN).body("Field missing in JSON");
+            return "400";
         }
     }
 
-    @DeleteMapping("/llamas/{id}")
-    public ResponseEntity deleteLlama(@PathVariable Long id){
-        if(llamaService.deleteLlamaById(id))
-            return ResponseEntity.ok(llamaService.getAllLlamas());
-        return ResponseEntity.notFound().build();
+    @GetMapping("/llamas/delete/{id}")
+    public String deleteLlama(@PathVariable Long id, Model model){
+        if(llamaService.deleteLlamaById(id)){
+            return "redirect:/llamas";
+        } else {
+            return "404";
+        }
+    }
+
+    @GetMapping("/new-animal")
+    public String newAnimalForm(){
+        return "animal-create";
+    }
+    @GetMapping("/update-animal/{id}")
+    public String updateAnimalForm(@PathVariable Long id, Model model){
+        Optional<Llama> llama = llamaService.getLlamaById(id);
+        if(llama.isEmpty()){
+            return "404";
+        }
+        model.addAttribute("llama", llama.orElseThrow());
+        return "animal-update";
+    }
+
+    @GetMapping("/profile_pictures/{llamaId}")
+    public ResponseEntity pfp(@PathVariable long llamaId){
+        Optional<Llama> llama = llamaService.getLlamaById(llamaId);
+        if(llama.isEmpty())
+            return ResponseEntity.notFound().build();
+        File profilePictureFile = new File("src/main/resources/static/profile_pictures/llama" + llamaId);
+        if(!profilePictureFile.exists())
+            return ResponseEntity.notFound().build();
+        try (InputStream stream = new FileInputStream(profilePictureFile.getAbsolutePath())){
+            InputStreamResource isr = new InputStreamResource(stream);
+            return ResponseEntity.ok().contentType(MediaType.valueOf(llama.orElseThrow().getImageContentType())).body(isr.getContentAsByteArray());
+        } catch (IOException e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @GetMapping("/static/{fn}")
+    public ResponseEntity staticFile(@PathVariable String fn){
+        InputStream file = getClass().getResourceAsStream("/static/" + fn);
+        if(file == null)
+            return ResponseEntity.notFound().build();
+        return ResponseEntity.ok().contentType(MediaType.valueOf(fn.endsWith(".css") ? "text/css" :
+                fn.endsWith(".html") ? "text/html" :
+                fn.endsWith(".jpg") || fn.endsWith(".jpeg") ? "image/jpeg" :
+                fn.endsWith(".png") ? "image/png" :
+                fn.endsWith(".js") ? "text/javascript" : "application/octet-stream")).body(new InputStreamResource(file));
     }
 }

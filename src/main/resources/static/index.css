@@ -1,0 +1,125 @@
+html, body {
+  --navbar-background: darkblue;
+  --navbar-link-hover-color: black;
+  --navbar-logo-color: white;
+  --navbar-link-color: pink;
+  --animal-card-border: darkblue;
+  height: 100%;
+  padding: 0;
+  margin: 0;
+}
+h2, span {
+  font-family: Georgia;
+}
+#navBuffer {
+  width: 100%;
+  height: 8%;
+}
+#navBar {
+  top: 0;
+  position: fixed;
+  width: 100%;
+  height: 8%;
+  background-color: var(--navbar-background);
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+}
+#navIcon {
+  margin: auto 0;
+  margin-left: 20px;
+  font-size: 25px;
+  color: var(--navbar-logo-color);
+}
+#navBar > a {
+  margin: auto 0;
+  color: var(--navbar-link-color);
+  font-size: 20px;
+}
+#navBar > a:hover {
+  background-color: var(--navbar-link-hover-color);
+}
+#gallery {
+  display: flex;
+  flex-flow: row wrap;
+}
+.animalCard{
+  margin: 10px;
+  border: 4px var(--animal-card-border) solid;
+}
+.animalCard > img {
+  width: 320px;
+  aspect-ratio: 1;
+  object-fit: cover;
+}
+.animalCard > h2 {
+  margin-left: 10px;
+}
+.animalCard > p {
+  margin-left: 10px;
+  width: 300px;
+}
+#searchDiv {
+  font-size: 30px;
+  margin: 0 auto;
+  margin-top: 20px;
+  width: min-content;
+  white-space: nowrap;
+}
+#searchDiv > input{
+  font-size: 30px;
+  height: 30px;
+}
+.animalTag {
+  border-radius: 100vh;
+  line-height: 80%;
+  padding: 10px;
+  border: 1px black solid;
+  transition: background-color linear 0.15s;
+  display: inline-block;
+}
+.animalTag:hover {
+  background-color: #AAA;
+}
+.tagList {
+  margin: 10px;
+}
+h1, h3{
+  margin:auto;
+  width: max-content;
+}
+form {
+  width: max-content;
+  margin:auto;
+}
+label[for="desc"] {
+  vertical-align: top;
+}
+form textarea {
+  width: 300px;
+  height: 5em;
+}
+form select {
+  width: 306px;
+}
+form button {
+  background-color: var(--navbar-background);
+  color: white;
+  border-radius: 10px;
+  font-size: 20px;
+  font-family: Georgia;
+  margin-top: 10px;
+}
+#searchButton{
+  background-color: var(--navbar-background);
+  color: white;
+  cursor: pointer;
+
+}
+
+.cardHeader{
+    margin: 0 10px;
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+}

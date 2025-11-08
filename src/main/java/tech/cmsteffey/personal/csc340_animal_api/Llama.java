@@ -25,6 +25,9 @@ public class Llama {
     @Column(nullable = false)
     private String description;
 
+    @Column(nullable = false)
+    private String imageContentType;
+
     public Long getLlamaId() {
         return llamaId;
     }
@@ -63,5 +66,13 @@ public class Llama {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getImageContentType() {
+        return imageContentType;
+    }
+
+    public void setImageContentType(String imageContentType) {
+        this.imageContentType = imageContentType;
     }
 }

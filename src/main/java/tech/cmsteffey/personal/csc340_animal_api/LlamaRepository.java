@@ -9,7 +9,7 @@ import java.util.Optional;
 
 @Repository
 public interface LlamaRepository extends JpaRepository<Llama, Long> {
-    @Query(value = "select l.llama_id, l.name, l.description, l.age, l.color from llama l", nativeQuery = true)
+    @Query(value = "select l.llama_id, l.name, l.description, l.age, l.color, l.image_content_type from llama l", nativeQuery = true)
     List<Llama> getAllLlamas();
 
     List<Llama> getLlamasByColorIgnoreCase(String color);
