@@ -25,7 +25,8 @@ Simple CRUD API for Student Objects with JPA (Hibernate)
 - Build and run the main class. You should see a new table created in the Neon database.
 
 
-[Demo video](https://uncg-my.sharepoint.com/:v:/g/personal/cmsteffey_uncg_edu/EQ0JKaww-6pEiaXm3C4oofgBbi1m4ekisPkxrbzpUy0NwQ?nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0&e=s4n3IP)
+[Demo video](https://uncg-my.sharepoint.com/:v:/g/personal/cmsteffey_uncg_edu/EQ0JKaww-6pEiaXm3C4oofgBbi1m4ekisPkxrbzpUy0NwQ?nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0&e=s4n3IP)\
+[MVC Demo video](https://uncg-my.sharepoint.com/:v:/g/personal/cmsteffey_uncg_edu/EQfajN8B2FNEl9NczpJo8DYB9VOkp7Y9R1W_tlFmq2aAgw?e=5tCIOW&nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJTdHJlYW1XZWJBcHAiLCJyZWZlcnJhbFZpZXciOiJTaGFyZURpYWxvZy1MaW5rIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXcifX0%3D)
 ## API Endpoints
 Base URL: [`http://localhost:8080/llamas`](http://localhost:8080/llamas)
 
